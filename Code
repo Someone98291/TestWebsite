@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,11 +125,44 @@
           <img src="${product.image}" alt="${product.name}">
           <div class="name">${product.name}</div>
           <div class="price">${product.price}</div>
-          <button class="buy-button" onclick="alert('You cannot purchase this item yet.')">Buy</button>
+          <button class="buy-button" onclick="handlePurchase('${product.name}')">Buy</button>
         `;
 
         shopContainer.appendChild(productElement);
       });
+    }
+
+    // Function to handle purchase and send data to server
+    function handlePurchase(productName) {
+      // Ask for the user's name
+      const userName = prompt("Enter your name:");
+
+      if (userName) {
+        // Prepare the data to be sent
+        const purchaseData = {
+          name: userName,
+          product: productName
+        };
+
+        // Send the data to the server using Fetch API
+        fetch("https://3dprints.koyeb.app/purchases", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(purchaseData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert("Thank you for your purchase, " + userName + "!");
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("Something went wrong. Please try again.");
+        });
+      } else {
+        alert("Purchase cancelled. You must enter a name.");
+      }
     }
 
     // Initial render of products
